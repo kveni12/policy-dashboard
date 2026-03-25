@@ -75,11 +75,57 @@
 		};
 	}
 
+	function metricSummaryForPeriod(period, baseKey) {
+		const raw = cohortYMeansForPanel(tractData, { ...panelConfig, timePeriod: period, yVar: baseKey });
+		if (!raw) return null;
+		const metaRow = lookupYMeta(baseKey);
+		const kind = yMetricDisplayKind(metaRow);
+		const gap = raw.meanTod - raw.meanNonTod;
+		return {
+			...raw,
+			period,
+			periodLabel: periodDisplayLabel(period),
+			key: baseKey,
+			label: metaRow.label ?? baseKey,
+			kind,
+			gap,
+			fmtTod: formatYMetricSummary(raw.meanTod, kind),
+			fmtNonTod: formatYMetricSummary(raw.meanNonTod, kind),
+			fmtGap: formatYMetricSummary(gap, kind)
+		};
+	}
+
 	const minoritySummary = $derived.by(() => metricSummary('minority_pct_change'));
 	const incomeSummary = $derived.by(() => metricSummary('median_income_change_pct'));
 	const drivingSummary = $derived.by(() => metricSummary('drove_alone_pct_change'));
 	const commuteSummary = $derived.by(() => metricSummary('avg_travel_time_change'));
 	const educationSummary = $derived.by(() => metricSummary('bachelors_pct_change'));
+
+	const periodAnalysis = $derived.by(() =>
+		['90_00', '00_10', '10_20', '90_20'].map((period) => ({
+			period,
+			periodLabel: periodDisplayLabel(period),
+			minority: metricSummaryForPeriod(period, 'minority_pct_change'),
+			income: metricSummaryForPeriod(period, 'median_income_change_pct'),
+			driving: metricSummaryForPeriod(period, 'drove_alone_pct_change'),
+			commute: metricSummaryForPeriod(period, 'avg_travel_time_change')
+		}))
+	);
+
+	const maxPeriodGapMagnitude = $derived.by(() => {
+		const vals = periodAnalysis.flatMap((row) => [row.minority?.gap, row.income?.gap]).filter(Number.isFinite);
+		return vals.length ? d3.max(vals.map((v) => Math.abs(v))) || 1 : 1;
+	});
+
+	function gapBarWidth(v) {
+		if (!Number.isFinite(v)) return '0%';
+		return `${Math.max(6, (Math.abs(v) / maxPeriodGapMagnitude) * 100)}%`;
+	}
+
+	function gapTone(v) {
+		if (!Number.isFinite(v)) return 'neutral';
+		return v >= 0 ? 'good' : 'warn';
+	}
 
 	const highlightCards = $derived.by(() => {
 		const cards = [];
@@ -204,6 +250,15 @@
 		return notes;
 	});
 
+	const mainTakeaway = $derived.by(() => {
+		if (!minoritySummary || !incomeSummary || !drivingSummary || !commuteSummary) return null;
+		return {
+			title: 'Recommended policy framing',
+			body:
+				'TOD in this dataset looks like a mixed equity story: neighborhoods near transit show stronger travel-behavior gains, but they also show faster income change and continued demographic change. The policy question is how to preserve the mobility payoff while shaping who can remain and benefit.'
+		};
+	});
+
 	const fmtInt = d3.format(',');
 	const fmtPct = d3.format('.1%');
 </script>
@@ -275,9 +330,15 @@
 
 		<section class="highlights" aria-labelledby="highlights-heading">
 			<div class="section-head">
-				<p class="section-kicker">Executive summary</p>
-				<h2 id="highlights-heading">Start with the decision-relevant signals</h2>
+				<p class="section-kicker">Analysis readout</p>
+				<h2 id="highlights-heading">What the current evidence says</h2>
 			</div>
+		{#if mainTakeaway}
+			<div class="takeaway-banner">
+				<p class="takeaway-kicker">{mainTakeaway.title}</p>
+				<p>{mainTakeaway.body}</p>
+			</div>
+		{/if}
 		<div class="card-grid">
 			{#each highlightCards as card (card.title)}
 				<article class="highlight-card tone-{card.tone}">
@@ -285,6 +346,53 @@
 					<h3>{card.title}</h3>
 					<p class="card-summary">{card.summary}</p>
 					<p class="card-delta">{card.delta}</p>
+				</article>
+			{/each}
+		</div>
+	</section>
+
+	<section class="period-section" aria-labelledby="period-heading">
+		<div class="section-head">
+			<p class="section-kicker">Across decades</p>
+			<h2 id="period-heading">Check whether the story holds across time</h2>
+		</div>
+		<p class="section-copy">
+			A policymaker should be able to see whether the TOD pattern is stable over time, concentrated in one decade, or mixed. These cards show the TOD-minus-non-TOD gap for the two lead demographics and the two mobility context metrics.
+		</p>
+		<div class="period-grid">
+			{#each periodAnalysis as row (row.period)}
+				<article class="period-card">
+					<h3>{row.periodLabel}</h3>
+					<div class="period-metric">
+						<div class="period-label-row">
+							<span>Race/ethnicity composition gap</span>
+							<strong>{row.minority?.gap >= 0 ? '+' : ''}{row.minority?.fmtGap ?? '—'}</strong>
+						</div>
+						<div class="gap-track">
+							<div class="gap-fill gap-fill--{gapTone(row.minority?.gap)}" style={`width:${gapBarWidth(row.minority?.gap)}`}></div>
+						</div>
+						<p class="period-detail">{row.minority?.fmtTod ?? '—'} in TOD vs {row.minority?.fmtNonTod ?? '—'} outside TOD</p>
+					</div>
+					<div class="period-metric">
+						<div class="period-label-row">
+							<span>Income change gap</span>
+							<strong>{row.income?.gap >= 0 ? '+' : ''}{row.income?.fmtGap ?? '—'}</strong>
+						</div>
+						<div class="gap-track">
+							<div class="gap-fill gap-fill--{gapTone(row.income?.gap)}" style={`width:${gapBarWidth(row.income?.gap)}`}></div>
+						</div>
+						<p class="period-detail">{row.income?.fmtTod ?? '—'} in TOD vs {row.income?.fmtNonTod ?? '—'} outside TOD</p>
+					</div>
+					<div class="period-mini-grid">
+						<div>
+							<span class="mini-label">Driving-alone gap</span>
+							<strong class="mini-value">{row.driving?.gap >= 0 ? '+' : ''}{row.driving?.fmtGap ?? '—'}</strong>
+						</div>
+						<div>
+							<span class="mini-label">Commute-time gap</span>
+							<strong class="mini-value">{row.commute?.gap >= 0 ? '+' : ''}{row.commute?.fmtGap ?? '—'}</strong>
+						</div>
+					</div>
 				</article>
 			{/each}
 		</div>
@@ -304,7 +412,7 @@
 						TOD average versus {minoritySummary ? formatYMetricSummary(minoritySummary.meanNonTod, minoritySummary.kind) : '—'} in comparison tracts
 					</p>
 					<p class="focus-body">
-						This metric helps answer whether TOD growth is occurring alongside broader inclusion or alongside demographic narrowing. It should be read as an equity signal, not as a stand-alone verdict on displacement.
+						This should be the equity lens in the dashboard. It helps answer whether TOD growth is occurring alongside broader inclusion or alongside demographic narrowing, while still avoiding a simplistic claim that demographic change alone proves displacement.
 					</p>
 				</article>
 
@@ -316,9 +424,14 @@
 						TOD average versus {incomeSummary ? formatYMetricSummary(incomeSummary.meanNonTod, incomeSummary.kind) : '—'} in comparison tracts
 					</p>
 					<p class="focus-body">
-						Income is the clearest pressure indicator in the current dataset. If income rises faster in TOD tracts, policymakers should ask whether the gains reflect healthy investment, selective capture, or rising barriers to remaining in place.
+						Income is the clearest market-pressure indicator in the current dataset. If income rises faster in TOD tracts, policymakers should ask whether the gains reflect healthy investment, selective capture, or rising barriers to remaining in place.
 					</p>
 				</article>
+			</div>
+			<div class="focus-note">
+				<p>
+					Why not lead with education, driving, or commute time? Because those are supporting signals. Education helps interpret socioeconomic sorting, and mobility outcomes show whether TOD is functioning as intended, but race/ethnicity and income are the strongest starting points for a policymaker deciding how equitable TOD appears to be.
+				</p>
 			</div>
 		</section>
 
@@ -402,7 +515,7 @@
 				<p class="section-copy section-copy--tight">
 					Use this as a directional policy check, not a definitive result. If the relationship is weak, the dashboard should say that clearly rather than over-claim.
 					{#if affordabilityRegression}
-						For race/ethnicity composition change, the fitted relationship is weak (`R² = {affordabilityRegression.r2.toFixed(2)}`).
+						For race/ethnicity composition change, the fitted relationship is weak (`R² = {affordabilityRegression.r2.toFixed(2)}`), so affordability should be presented here as a hypothesis worth testing, not as a settled answer.
 					{/if}
 				</p>
 			{/if}
@@ -507,6 +620,7 @@
 	.map-shell,
 	.affordability-section,
 	.mobility-section,
+	.period-section,
 	.focus-section,
 	.highlights,
 	.actions,
@@ -519,6 +633,22 @@
 	.hero-stat {
 		padding: 18px;
 		background: rgba(10, 13, 18, 0.34);
+	}
+
+	.takeaway-banner {
+		margin-bottom: 18px;
+		padding: 18px 20px;
+		border-radius: 18px;
+		background: linear-gradient(90deg, rgba(227, 162, 73, 0.18), rgba(255, 255, 255, 0.03));
+		border: 1px solid rgba(227, 162, 73, 0.24);
+	}
+
+	.takeaway-kicker {
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #e7c886;
+		margin-bottom: 6px;
 	}
 
 	.hero-stat-label,
@@ -544,6 +674,7 @@
 
 	.controls,
 	.highlights,
+	.period-section,
 	.focus-section,
 	.map-section,
 	.mobility-section,
@@ -563,6 +694,7 @@
 
 	.controls-grid,
 	.card-grid,
+	.period-grid,
 	.focus-grid,
 	.tradeoff-grid,
 	.actions-grid,
@@ -593,11 +725,82 @@
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
+	.period-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
 	.highlight-card {
 		padding: 20px;
 		display: grid;
 		gap: 10px;
 		min-height: 200px;
+	}
+
+	.period-card {
+		padding: 20px;
+		display: grid;
+		gap: 14px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 20px;
+		background: linear-gradient(180deg, rgba(31, 35, 47, 0.98), rgba(21, 24, 33, 0.98));
+	}
+
+	.period-card h3 {
+		font-size: 1.2rem;
+	}
+
+	.period-metric {
+		display: grid;
+		gap: 8px;
+	}
+
+	.period-label-row,
+	.period-mini-grid {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.period-label-row span,
+	.mini-label,
+	.period-detail {
+		color: #aeb6ca;
+		font-size: 0.92rem;
+	}
+
+	.gap-track {
+		height: 10px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.07);
+		overflow: hidden;
+	}
+
+	.gap-fill {
+		height: 100%;
+		border-radius: inherit;
+	}
+
+	.gap-fill--good {
+		background: linear-gradient(90deg, #dba34d, #f3d28f);
+	}
+
+	.gap-fill--warn {
+		background: linear-gradient(90deg, #e16e5b, #f3aa8a);
+	}
+
+	.gap-fill--neutral {
+		background: linear-gradient(90deg, #7b859c, #aab2c4);
+	}
+
+	.period-mini-grid {
+		padding-top: 8px;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.mini-value {
+		display: block;
+		margin-top: 4px;
+		color: #f2f4fb;
 	}
 
 	.highlight-card h3,
@@ -635,6 +838,14 @@
 
 	.focus-compare {
 		color: #97a1b8;
+	}
+
+	.focus-note {
+		margin-top: 16px;
+		padding: 16px 18px;
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.04);
+		color: #c7cbd7;
 	}
 
 	.tradeoff-card--good {
@@ -701,6 +912,7 @@
 		.hero,
 		.controls-grid,
 		.card-grid,
+		.period-grid,
 		.focus-grid,
 		.tradeoff-grid,
 		.actions-grid,
@@ -720,6 +932,7 @@
 
 		.controls-grid,
 		.card-grid,
+		.period-grid,
 		.focus-grid,
 		.tradeoff-grid,
 		.actions-grid,
