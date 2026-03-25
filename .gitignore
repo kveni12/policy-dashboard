@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# SvelteKit / Vite
+.svelte-kit/
+build/
+dist/
+.vite/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# HUD LIHTC full ZIP (CSV lives under data/raw/lihtc/ after extract)
+data/raw/lihtcpub.zip
+
+# Python (data processing scripts)
+.venv/
+.conda/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs and debug
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor (keep shared project settings if you commit .vscode/)
+.idea/
+
+# Test / coverage
+coverage/

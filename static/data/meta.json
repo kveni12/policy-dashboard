@@ -1,0 +1,188 @@
+{
+  "yVariables": [
+    {
+      "key": "owner_pct_change",
+      "label": "Owner-Occupied Share Change (pp)",
+      "cat": "A",
+      "catLabel": "Displacement Proxies"
+    },
+    {
+      "key": "minority_owner_pct_change",
+      "label": "Minority Homeownership Change (pp)",
+      "cat": "A",
+      "catLabel": "Displacement Proxies"
+    },
+    {
+      "key": "vacancy_rate_change",
+      "label": "Vacancy Rate Change (pp)",
+      "cat": "A",
+      "catLabel": "Displacement Proxies"
+    },
+    {
+      "key": "pop_change_pct",
+      "label": "Population Change (%)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "minority_pct_change",
+      "label": "Minority Share Change (pp)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "median_income_change_pct",
+      "label": "Median Income Change (%)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "poverty_rate_change",
+      "label": "Poverty Rate Change (pp)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "bachelors_pct_change",
+      "label": "Bachelor's Degree Share Change (pp)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "foreign_born_pct_change",
+      "label": "Foreign-Born Share Change (pp)",
+      "cat": "B",
+      "catLabel": "Succession Indicators"
+    },
+    {
+      "key": "transit_pct_change",
+      "label": "Transit Commute Share Change (pp)",
+      "cat": "C",
+      "catLabel": "TOD Outcomes"
+    },
+    {
+      "key": "drove_alone_pct_change",
+      "label": "Drove-Alone Share Change (pp)",
+      "cat": "C",
+      "catLabel": "TOD Outcomes"
+    },
+    {
+      "key": "avg_travel_time_change",
+      "label": "Avg Travel Time Change (min)",
+      "cat": "C",
+      "catLabel": "TOD Outcomes"
+    }
+  ],
+  "xVariables": [
+    {
+      "key": "census_hu_change",
+      "label": "Net HU change (decennial census)",
+      "source": "census",
+      "sourceLabel": "Census (decennial)"
+    },
+    {
+      "key": "pct_stock_increase",
+      "label": "Housing stock increase (%)",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds (filtered developments)"
+    },
+    {
+      "key": "multifam_share",
+      "label": "Multifamily share of new dev",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds (filtered developments)"
+    },
+    {
+      "key": "affordable_share",
+      "label": "Affordable share of new dev",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds + HUD LIHTC (matched fills)"
+    },
+    {
+      "key": "affordable_stock_pct",
+      "label": "Affordable increase / housing stock (%)",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds + HUD LIHTC (matched fills)"
+    },
+    {
+      "key": "multifam_stock_pct",
+      "label": "Multifamily increase / housing stock (%)",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds (filtered developments)"
+    },
+    {
+      "key": "new_units",
+      "label": "Total new units",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds (filtered developments)"
+    },
+    {
+      "key": "new_affordable",
+      "label": "New affordable units",
+      "source": "massbuilds",
+      "sourceLabel": "MassBuilds + HUD LIHTC (matched fills)"
+    }
+  ],
+  "controlAverages": {
+    "90_00": {
+      "pop_change_pct_90_00": 7.72,
+      "minority_pct_change_90_00": 4.81,
+      "owner_pct_change_90_00": 1.56,
+      "vacancy_rate_change_90_00": -2.04,
+      "minority_owner_pct_change_90_00": 3.44,
+      "foreign_born_pct_change_90_00": 1.56,
+      "bachelors_pct_change_90_00": 3.92,
+      "poverty_rate_change_90_00": 0.76,
+      "transit_pct_change_90_00": 0.32,
+      "drove_alone_pct_change_90_00": 1.9,
+      "avg_travel_time_change_90_00": 3.84,
+      "median_income_change_pct_90_00": 35.23,
+      "census_hu_change_90_00": 130.15
+    },
+    "00_10": {
+      "pop_change_pct_00_10": 142.67,
+      "minority_pct_change_00_10": 3.28,
+      "owner_pct_change_00_10": -0.12,
+      "vacancy_rate_change_00_10": 2.19,
+      "minority_owner_pct_change_00_10": 2.49,
+      "foreign_born_pct_change_00_10": 1.8,
+      "bachelors_pct_change_00_10": 4.34,
+      "poverty_rate_change_00_10": 1.11,
+      "transit_pct_change_00_10": -0.07,
+      "drove_alone_pct_change_00_10": 0.22,
+      "avg_travel_time_change_00_10": 0.38,
+      "median_income_change_pct_00_10": 27.66,
+      "census_hu_change_00_10": 140.01
+    },
+    "10_20": {
+      "pop_change_pct_10_20": 5.97,
+      "minority_pct_change_10_20": 10.23,
+      "owner_pct_change_10_20": -1.23,
+      "vacancy_rate_change_10_20": -1.06,
+      "minority_owner_pct_change_10_20": 7.5,
+      "foreign_born_pct_change_10_20": 1.62,
+      "bachelors_pct_change_10_20": 4.64,
+      "poverty_rate_change_10_20": -0.41,
+      "transit_pct_change_10_20": 0.09,
+      "drove_alone_pct_change_10_20": -3.06,
+      "avg_travel_time_change_10_20": 2.01,
+      "median_income_change_pct_10_20": 27.27,
+      "census_hu_change_10_20": 111.14
+    },
+    "90_20": {
+      "pop_change_pct_90_20": 18.74,
+      "minority_pct_change_90_20": 18.33,
+      "owner_pct_change_90_20": 0.22,
+      "vacancy_rate_change_90_20": -0.88,
+      "minority_owner_pct_change_90_20": 13.43,
+      "foreign_born_pct_change_90_20": 4.97,
+      "bachelors_pct_change_90_20": 12.9,
+      "poverty_rate_change_90_20": 1.54,
+      "transit_pct_change_90_20": 0.28,
+      "drove_alone_pct_change_90_20": -0.44,
+      "avg_travel_time_change_90_20": 6.21,
+      "median_income_change_pct_90_20": 117.12,
+      "census_hu_change_90_20": 381.31
+    }
+  }
+}
