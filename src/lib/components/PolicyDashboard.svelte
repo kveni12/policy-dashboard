@@ -85,36 +85,36 @@
 		const cards = [];
 		if (minoritySummary) {
 			cards.push({
-				eyebrow: 'Equity signal',
-				title: 'Minority share grew slightly more in TOD tracts',
-				summary: `${formatYMetricSummary(minoritySummary.meanTod, minoritySummary.kind)} in TOD vs ${formatYMetricSummary(minoritySummary.meanNonTod, minoritySummary.kind)} in non-TOD`,
+				eyebrow: 'Lead demographic',
+				title: 'Racial composition changes differently in TOD tracts',
+				summary: `${formatYMetricSummary(minoritySummary.meanTod, minoritySummary.kind)} in TOD versus ${formatYMetricSummary(minoritySummary.meanNonTod, minoritySummary.kind)} in comparison tracts`,
 				delta: `${minoritySummary.gap >= 0 ? '+' : ''}${minoritySummary.fmtGap}`,
 				tone: minoritySummary.gap >= 0 ? 'warm' : 'cool'
 			});
 		}
 		if (incomeSummary) {
 			cards.push({
-				eyebrow: 'Economic shift',
-				title: 'Income growth is much stronger in TOD tracts',
-				summary: `${formatYMetricSummary(incomeSummary.meanTod, incomeSummary.kind)} in TOD vs ${formatYMetricSummary(incomeSummary.meanNonTod, incomeSummary.kind)} in non-TOD`,
+				eyebrow: 'Lead demographic',
+				title: 'Income growth is stronger in TOD tracts',
+				summary: `${formatYMetricSummary(incomeSummary.meanTod, incomeSummary.kind)} in TOD versus ${formatYMetricSummary(incomeSummary.meanNonTod, incomeSummary.kind)} in comparison tracts`,
 				delta: `${incomeSummary.gap >= 0 ? '+' : ''}${incomeSummary.fmtGap}`,
 				tone: 'alert'
 			});
 		}
 		if (drivingSummary) {
 			cards.push({
-				eyebrow: 'Mobility benefit',
+				eyebrow: 'System outcome',
 				title: 'Driving alone falls more in TOD tracts',
-				summary: `${formatYMetricSummary(drivingSummary.meanTod, drivingSummary.kind)} in TOD vs ${formatYMetricSummary(drivingSummary.meanNonTod, drivingSummary.kind)} in non-TOD`,
+				summary: `${formatYMetricSummary(drivingSummary.meanTod, drivingSummary.kind)} in TOD versus ${formatYMetricSummary(drivingSummary.meanNonTod, drivingSummary.kind)} in comparison tracts`,
 				delta: `${drivingSummary.gap >= 0 ? '+' : ''}${drivingSummary.fmtGap}`,
 				tone: 'cool'
 			});
 		}
 		if (commuteSummary) {
 			cards.push({
-				eyebrow: 'Tradeoff',
+				eyebrow: 'Watchpoint',
 				title: 'Commute times also rise more in TOD tracts',
-				summary: `${formatYMetricSummary(commuteSummary.meanTod, commuteSummary.kind)} in TOD vs ${formatYMetricSummary(commuteSummary.meanNonTod, commuteSummary.kind)} in non-TOD`,
+				summary: `${formatYMetricSummary(commuteSummary.meanTod, commuteSummary.kind)} in TOD versus ${formatYMetricSummary(commuteSummary.meanNonTod, commuteSummary.kind)} in comparison tracts`,
 				delta: `${commuteSummary.gap >= 0 ? '+' : ''}${commuteSummary.fmtGap}`,
 				tone: 'neutral'
 			});
@@ -185,21 +185,21 @@
 		const notes = [];
 		if (minoritySummary && incomeSummary) {
 			notes.push(
-				'TOD appears to coincide with both rising diversity and rising incomes, so the dashboard should frame growth and displacement risk together rather than treat them as opposites.'
+				'Use race and income together. Each one alone is incomplete; together they show whether TOD-linked growth looks broadly shared or selectively captured.'
 			);
 		}
 		if (drivingSummary && commuteSummary) {
 			notes.push(
-				'TOD tracts show the expected mobility gain on driving, but not a universal time-saving effect. That helps policymakers talk about transit access and commute burden as separate outcomes.'
+				'Separate access from burden. The dashboard suggests TOD may reduce auto dependence without automatically reducing total travel time.'
 			);
 		}
 		if (educationSummary) {
 			notes.push(
-				`Education increases also run higher in TOD tracts (${formatYMetricSummary(educationSummary.meanTod, educationSummary.kind)} vs ${formatYMetricSummary(educationSummary.meanNonTod, educationSummary.kind)}), which reinforces the socioeconomic sorting story.`
+				`Education also shifts upward in TOD tracts (${formatYMetricSummary(educationSummary.meanTod, educationSummary.kind)} versus ${formatYMetricSummary(educationSummary.meanNonTod, educationSummary.kind)}), which is useful context for interpreting the income pattern.`
 			);
 		}
 		notes.push(
-			'These are descriptive comparisons across tracts, not causal estimates. Some of the pattern may reflect Boston-area urban tracts versus less urban places.'
+			'These are descriptive cohort comparisons, not causal estimates. Urban form and regional context may explain part of the difference.'
 		);
 		return notes;
 	});
@@ -209,16 +209,16 @@
 </script>
 
 <section class="policy-dashboard">
-	<header class="hero">
-		<div class="hero-copy">
-			<p class="eyebrow">Policymaker briefing</p>
-			<h1>TOD, race, and income change in Massachusetts</h1>
-			<p class="lede">
-				This dashboard narrows the story to two core demographics: <strong>racial composition</strong>
-				and <strong>economic status</strong>. The point is not just whether TOD builds housing, but
-				who appears to benefit, who may be pressured, and what tradeoffs show up alongside the gains.
-			</p>
-		</div>
+		<header class="hero">
+			<div class="hero-copy">
+				<p class="eyebrow">Policy dashboard</p>
+				<h1>Who benefits from TOD, and under what conditions?</h1>
+				<p class="lede">
+					This view is intentionally built around two lead demographics: <strong>race/ethnicity</strong>
+					and <strong>income</strong>. For a policymaker, those are the clearest lenses for judging
+					whether TOD is expanding opportunity, concentrating advantage, or doing both at once.
+				</p>
+			</div>
 		<div class="hero-meta">
 			<div class="hero-stat">
 				<span class="hero-stat-label">Analysis period</span>
@@ -235,11 +235,11 @@
 		</div>
 	</header>
 
-	<section class="controls" aria-labelledby="controls-heading">
-		<div class="section-head">
-			<p class="section-kicker">Scope</p>
-			<h2 id="controls-heading">Choose the comparison</h2>
-		</div>
+		<section class="controls" aria-labelledby="controls-heading">
+			<div class="section-head">
+				<p class="section-kicker">Comparison design</p>
+				<h2 id="controls-heading">Set the TOD and non-TOD cohorts</h2>
+			</div>
 		<div class="controls-grid">
 			<label class="control">
 				<span>Time period</span>
@@ -267,17 +267,17 @@
 				<input type="number" min="0" step="10" bind:value={minHuChange} />
 			</label>
 		</div>
-		<p class="controls-note">
-			The current setup compares {fmtInt(analysisUniverse)} tracts that pass the filters and then splits them into TOD and non-TOD cohorts.
-			Means are weighted by tract population in {periodBounds.startY}.
-		</p>
-	</section>
+			<p class="controls-note">
+				The page compares {fmtInt(analysisUniverse)} tracts that pass the filters, then separates them into TOD and non-TOD cohorts.
+				Summaries are weighted by tract population in {periodBounds.startY} so large neighborhoods matter proportionally.
+			</p>
+		</section>
 
-	<section class="highlights" aria-labelledby="highlights-heading">
-		<div class="section-head">
-			<p class="section-kicker">Headline findings</p>
-			<h2 id="highlights-heading">What a policymaker should notice first</h2>
-		</div>
+		<section class="highlights" aria-labelledby="highlights-heading">
+			<div class="section-head">
+				<p class="section-kicker">Executive summary</p>
+				<h2 id="highlights-heading">Start with the decision-relevant signals</h2>
+			</div>
 		<div class="card-grid">
 			{#each highlightCards as card (card.title)}
 				<article class="highlight-card tone-{card.tone}">
@@ -290,82 +290,82 @@
 		</div>
 	</section>
 
-	<section class="focus-section" aria-labelledby="demographics-heading">
-		<div class="section-head">
-			<p class="section-kicker">Demographic focus</p>
-			<h2 id="demographics-heading">Lead with race and income</h2>
-		</div>
-		<div class="focus-grid">
-			<article class="focus-card">
-				<p class="focus-label">Demographic 1</p>
-				<h3>Minority share change</h3>
-				<p class="focus-value">{minoritySummary ? formatYMetricSummary(minoritySummary.meanTod, minoritySummary.kind) : '—'}</p>
-				<p class="focus-compare">
-					TOD average versus {minoritySummary ? formatYMetricSummary(minoritySummary.meanNonTod, minoritySummary.kind) : '—'} in non-TOD tracts
-				</p>
-				<p class="focus-body">
-					Your current data supports a careful equity story: TOD tracts are not showing obvious minority decline on average. If anything, minority share rises slightly more in TOD places, which pushes against a simple “TOD always displaces minorities” narrative.
-				</p>
-			</article>
+		<section class="focus-section" aria-labelledby="demographics-heading">
+			<div class="section-head">
+				<p class="section-kicker">Primary demographics</p>
+				<h2 id="demographics-heading">Use race and income as the core story</h2>
+			</div>
+			<div class="focus-grid">
+				<article class="focus-card">
+					<p class="focus-label">Demographic 1</p>
+					<h3>Race and ethnicity composition</h3>
+					<p class="focus-value">{minoritySummary ? formatYMetricSummary(minoritySummary.meanTod, minoritySummary.kind) : '—'}</p>
+					<p class="focus-compare">
+						TOD average versus {minoritySummary ? formatYMetricSummary(minoritySummary.meanNonTod, minoritySummary.kind) : '—'} in comparison tracts
+					</p>
+					<p class="focus-body">
+						This metric helps answer whether TOD growth is occurring alongside broader inclusion or alongside demographic narrowing. It should be read as an equity signal, not as a stand-alone verdict on displacement.
+					</p>
+				</article>
 
-			<article class="focus-card">
-				<p class="focus-label">Demographic 2</p>
-				<h3>Median income change</h3>
-				<p class="focus-value">{incomeSummary ? formatYMetricSummary(incomeSummary.meanTod, incomeSummary.kind) : '—'}</p>
-				<p class="focus-compare">
-					TOD average versus {incomeSummary ? formatYMetricSummary(incomeSummary.meanNonTod, incomeSummary.kind) : '—'} in non-TOD tracts
-				</p>
-				<p class="focus-body">
-					The stronger income growth is the warning sign. TOD areas may be becoming more attractive and more expensive at the same time, which means policymakers should pair transit investment with affordability and anti-displacement tools.
-				</p>
-			</article>
-		</div>
-	</section>
+				<article class="focus-card">
+					<p class="focus-label">Demographic 2</p>
+					<h3>Income change</h3>
+					<p class="focus-value">{incomeSummary ? formatYMetricSummary(incomeSummary.meanTod, incomeSummary.kind) : '—'}</p>
+					<p class="focus-compare">
+						TOD average versus {incomeSummary ? formatYMetricSummary(incomeSummary.meanNonTod, incomeSummary.kind) : '—'} in comparison tracts
+					</p>
+					<p class="focus-body">
+						Income is the clearest pressure indicator in the current dataset. If income rises faster in TOD tracts, policymakers should ask whether the gains reflect healthy investment, selective capture, or rising barriers to remaining in place.
+					</p>
+				</article>
+			</div>
+		</section>
 
-	<section class="map-section" aria-labelledby="map-heading">
-		<div class="section-head">
-			<p class="section-kicker">Geography</p>
-			<h2 id="map-heading">Where the cohorts are</h2>
-		</div>
-		<p class="section-copy">
-			This map uses the same rules as the summaries above. It helps separate genuine TOD-like tracts from the comparison group before anyone reads the results as statewide averages.
-		</p>
+		<section class="map-section" aria-labelledby="map-heading">
+			<div class="section-head">
+				<p class="section-kicker">Geography</p>
+				<h2 id="map-heading">See the comparison groups on the map</h2>
+			</div>
+			<p class="section-copy">
+				This map uses the same cohort rules as the summaries above. It makes the comparison transparent before anyone interprets the results as a statewide average.
+			</p>
 		<div class="map-shell">
 			<PolicyCohortMap panelConfig={panelConfig} />
 		</div>
 	</section>
 
-	<section class="mobility-section" aria-labelledby="mobility-heading">
-		<div class="section-head">
-			<p class="section-kicker">Benefit and tradeoff</p>
-			<h2 id="mobility-heading">Mobility outcomes to pair with the demographic story</h2>
-		</div>
-		<div class="tradeoff-grid">
-			<article class="tradeoff-card tradeoff-card--good">
-				<h3>Driving falls more in TOD tracts</h3>
-				<p class="tradeoff-value">{drivingSummary ? formatYMetricSummary(drivingSummary.meanTod, drivingSummary.kind) : '—'}</p>
-				<p class="tradeoff-copy">
-					Compared with {drivingSummary ? formatYMetricSummary(drivingSummary.meanNonTod, drivingSummary.kind) : '—'} in non-TOD tracts. This is the cleanest “TOD is doing TOD things” signal in the dashboard.
-				</p>
-			</article>
-			<article class="tradeoff-card tradeoff-card--watch">
-				<h3>Commute time still rises more in TOD tracts</h3>
-				<p class="tradeoff-value">{commuteSummary ? formatYMetricSummary(commuteSummary.meanTod, commuteSummary.kind) : '—'}</p>
-				<p class="tradeoff-copy">
-					Compared with {commuteSummary ? formatYMetricSummary(commuteSummary.meanNonTod, commuteSummary.kind) : '—'} in non-TOD tracts. Transit access does not automatically mean shorter trips, especially in larger job markets.
-				</p>
-			</article>
-		</div>
-	</section>
+		<section class="mobility-section" aria-labelledby="mobility-heading">
+			<div class="section-head">
+				<p class="section-kicker">System outcomes</p>
+				<h2 id="mobility-heading">Pair the demographic story with mobility outcomes</h2>
+			</div>
+			<div class="tradeoff-grid">
+				<article class="tradeoff-card tradeoff-card--good">
+					<h3>Potential benefit: less driving alone</h3>
+					<p class="tradeoff-value">{drivingSummary ? formatYMetricSummary(drivingSummary.meanTod, drivingSummary.kind) : '—'}</p>
+					<p class="tradeoff-copy">
+						Compared with {drivingSummary ? formatYMetricSummary(drivingSummary.meanNonTod, drivingSummary.kind) : '—'} in comparison tracts. This is the strongest signal that TOD may be changing travel behavior in the intended direction.
+					</p>
+				</article>
+				<article class="tradeoff-card tradeoff-card--watch">
+					<h3>Potential concern: longer commute times</h3>
+					<p class="tradeoff-value">{commuteSummary ? formatYMetricSummary(commuteSummary.meanTod, commuteSummary.kind) : '—'}</p>
+					<p class="tradeoff-copy">
+						Compared with {commuteSummary ? formatYMetricSummary(commuteSummary.meanNonTod, commuteSummary.kind) : '—'} in comparison tracts. Access to transit and total travel burden are related, but they are not the same policy outcome.
+					</p>
+				</article>
+			</div>
+		</section>
 
-	<section class="affordability-section" aria-labelledby="affordability-heading">
-		<div class="section-head">
-			<p class="section-kicker">Affordability lens</p>
-			<h2 id="affordability-heading">Does more affordable TOD look different?</h2>
-		</div>
-		<p class="section-copy">
-			Within TOD tracts only, the dashboard splits places with affordable-share data into a high-affordability half and a low-affordability half, based on the median affordable share of new units.
-		</p>
+		<section class="affordability-section" aria-labelledby="affordability-heading">
+			<div class="section-head">
+				<p class="section-kicker">Policy lever</p>
+				<h2 id="affordability-heading">Test affordability as a moderating factor</h2>
+			</div>
+			<p class="section-copy">
+				Within TOD tracts only, this section asks whether places with more affordable development look meaningfully different from places with less. It is framed as a policy lever, not as a proven causal mechanism.
+			</p>
 		{#if affordabilitySplit.median == null}
 			<p class="empty-state">No affordable-share split is available with the current filters.</p>
 		{:else}
@@ -399,40 +399,40 @@
 				{/each}
 			</div>
 
-			<p class="section-copy section-copy--tight">
-				This is best used as a directional check, not a strong claim. In your own notes, the affordability relationships looked mostly flat, and the regression here tells a similar story.
-				{#if affordabilityRegression}
-					For minority-share change, the fitted relationship is weak (`R² = {affordabilityRegression.r2.toFixed(2)}`).
-				{/if}
-			</p>
-		{/if}
-	</section>
+				<p class="section-copy section-copy--tight">
+					Use this as a directional policy check, not a definitive result. If the relationship is weak, the dashboard should say that clearly rather than over-claim.
+					{#if affordabilityRegression}
+						For race/ethnicity composition change, the fitted relationship is weak (`R² = {affordabilityRegression.r2.toFixed(2)}`).
+					{/if}
+				</p>
+			{/if}
+		</section>
 
-	<section class="actions" aria-labelledby="actions-heading">
-		<div class="section-head">
-			<p class="section-kicker">Policy use</p>
-			<h2 id="actions-heading">How to present this to a policymaker</h2>
-		</div>
-		<div class="actions-grid">
-			<div class="action-box">
-				<h3>Main message</h3>
-				<p>
-					TOD is associated with lower driving and higher neighborhood change. The question is not whether TOD should happen, but how to keep the benefits while reducing exclusionary pressure.
-				</p>
+		<section class="actions" aria-labelledby="actions-heading">
+			<div class="section-head">
+				<p class="section-kicker">Policy takeaway</p>
+				<h2 id="actions-heading">What this dashboard is designed to help decide</h2>
 			</div>
-			<div class="action-box">
-				<h3>Best framing</h3>
-				<p>
-					Lead with race and income together. Saying only “minority share increases” can sound reassuring, while saying only “income rises” can sound alarmist. Putting them side by side is more honest.
-				</p>
+			<div class="actions-grid">
+				<div class="action-box">
+					<h3>Main question</h3>
+					<p>
+						Can TOD deliver mobility gains without concentrating neighborhood change among higher-income households or reshaping access inequitably?
+					</p>
+				</div>
+				<div class="action-box">
+					<h3>How to frame it</h3>
+					<p>
+						Lead with race and income together, then show the mobility payoff and the affordability caveat. That structure keeps the dashboard focused on policy tradeoffs instead of isolated statistics.
+					</p>
+				</div>
+				<div class="action-box">
+					<h3>What to add next</h3>
+					<p>
+						Add rent, home value, rent burden, and ethnic subgroup detail next. Those variables would make the equity story much stronger than income change alone.
+					</p>
+				</div>
 			</div>
-			<div class="action-box">
-				<h3>Recommended next variables</h3>
-				<p>
-					Add rent, home value, rent burden, and ethnic subgroup breakdowns next. Those are the clearest missing pieces if you want a stronger displacement story.
-				</p>
-			</div>
-		</div>
 		<div class="note-list">
 			{#each policymakerNotes as note (note)}
 				<p>{note}</p>
