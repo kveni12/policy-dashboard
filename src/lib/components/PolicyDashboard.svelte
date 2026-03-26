@@ -259,6 +259,64 @@
 		};
 	});
 
+	const questionCards = $derived.by(() => [
+		{
+			id: 'race',
+			kicker: 'Question 1',
+			title: 'Are TOD neighborhoods becoming more or less inclusive?',
+			value: minoritySummary ? `${minoritySummary.gap >= 0 ? '+' : ''}${minoritySummary.fmtGap}` : '—',
+			body:
+				'Use race and ethnicity composition change as the first equity test. A positive TOD-minus-non-TOD gap suggests TOD areas are not simply hollowing out diversity on average, but it does not settle the displacement question by itself.'
+		},
+		{
+			id: 'income',
+			kicker: 'Question 2',
+			title: 'Is TOD associated with stronger market pressure?',
+			value: incomeSummary ? `${incomeSummary.gap >= 0 ? '+' : ''}${incomeSummary.fmtGap}` : '—',
+			body:
+				'Income change is the clearest pressure indicator in the current data. If income grows faster in TOD tracts, policymakers should assume some combination of increased demand, reinvestment, and potential exclusionary pressure.'
+		},
+		{
+			id: 'mobility',
+			kicker: 'Question 3',
+			title: 'Are mobility gains strong enough to justify the tradeoffs?',
+			value: drivingSummary ? `${drivingSummary.gap >= 0 ? '+' : ''}${drivingSummary.fmtGap}` : '—',
+			body:
+				'The mobility case should be shown next to the equity case. In this dataset, TOD usually reduces driving more, but commute-time gains are not guaranteed.'
+		}
+	]);
+
+	function periodNarrative(row) {
+		const incomeGap = row.income?.gap ?? NaN;
+		const minorityGap = row.minority?.gap ?? NaN;
+		if (!Number.isFinite(incomeGap) || !Number.isFinite(minorityGap)) {
+			return {
+				label: 'Insufficient signal',
+				tone: 'neutral',
+				text: 'This period does not provide a clear TOD-versus-non-TOD story under the current filters.'
+			};
+		}
+		if (incomeGap > 4 && minorityGap > 0) {
+			return {
+				label: 'Growth with pressure',
+				tone: 'alert',
+				text: 'TOD tracts show both stronger demographic change and stronger income growth. This is the pattern most consistent with “mobility gains plus rising pressure.”'
+			};
+		}
+		if (incomeGap <= 0 && minorityGap > 0) {
+			return {
+				label: 'Mixed decade',
+				tone: 'cool',
+				text: 'TOD tracts show stronger demographic change, but not stronger income growth. That weakens any simple “TOD always intensifies pressure” claim.'
+			};
+		}
+		return {
+			label: 'Moderate divergence',
+			tone: 'warm',
+			text: 'TOD differs from the control group, but the pattern is not as stark. This is useful context rather than a headline decade.'
+		};
+	}
+
 	const fmtInt = d3.format(',');
 	const fmtPct = d3.format('.1%');
 </script>
@@ -289,6 +347,23 @@
 			</div>
 		</div>
 	</header>
+
+	<section class="question-section" aria-labelledby="questions-heading">
+		<div class="section-head">
+			<p class="section-kicker">Frame the story</p>
+			<h2 id="questions-heading">Three policy questions this dashboard should answer</h2>
+		</div>
+		<div class="question-grid">
+			{#each questionCards as card (card.id)}
+				<article class="question-card">
+					<p class="question-kicker">{card.kicker}</p>
+					<h3>{card.title}</h3>
+					<p class="question-value">{card.value}</p>
+					<p class="question-body">{card.body}</p>
+				</article>
+			{/each}
+		</div>
+	</section>
 
 		<section class="controls" aria-labelledby="controls-heading">
 			<div class="section-head">
@@ -362,7 +437,11 @@
 		<div class="period-grid">
 			{#each periodAnalysis as row (row.period)}
 				<article class="period-card">
-					<h3>{row.periodLabel}</h3>
+					<div class="period-card-head">
+						<h3>{row.periodLabel}</h3>
+						<span class="period-tag period-tag--{periodNarrative(row).tone}">{periodNarrative(row).label}</span>
+					</div>
+					<p class="period-story">{periodNarrative(row).text}</p>
 					<div class="period-metric">
 						<div class="period-label-row">
 							<span>Race/ethnicity composition gap</span>
@@ -612,6 +691,7 @@
 	}
 
 	.hero-stat,
+	.question-section,
 	.action-box,
 	.focus-card,
 	.tradeoff-card,
@@ -673,6 +753,7 @@
 	}
 
 	.controls,
+	.question-section,
 	.highlights,
 	.period-section,
 	.focus-section,
@@ -695,6 +776,7 @@
 	.controls-grid,
 	.card-grid,
 	.period-grid,
+	.question-grid,
 	.focus-grid,
 	.tradeoff-grid,
 	.actions-grid,
@@ -705,6 +787,36 @@
 
 	.controls-grid {
 		grid-template-columns: repeat(5, minmax(0, 1fr));
+	}
+
+	.question-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.question-card {
+		padding: 22px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 20px;
+		background: linear-gradient(180deg, rgba(28, 33, 45, 0.98), rgba(20, 24, 33, 0.98));
+		display: grid;
+		gap: 10px;
+	}
+
+	.question-kicker {
+		font-size: 0.78rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #e7c886;
+	}
+
+	.question-value {
+		font-size: 1.8rem;
+		font-weight: 700;
+		color: #f2f4fb;
+	}
+
+	.question-body {
+		color: #c7cbd7;
 	}
 
 	.control {
@@ -747,6 +859,46 @@
 
 	.period-card h3 {
 		font-size: 1.2rem;
+	}
+
+	.period-card-head {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		align-items: start;
+	}
+
+	.period-tag {
+		padding: 6px 10px;
+		border-radius: 999px;
+		font-size: 0.76rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.period-tag--alert {
+		background: rgba(225, 110, 91, 0.16);
+		color: #f0ad9f;
+	}
+
+	.period-tag--cool {
+		background: rgba(103, 173, 235, 0.16);
+		color: #aed7fb;
+	}
+
+	.period-tag--warm {
+		background: rgba(219, 163, 77, 0.16);
+		color: #f2d398;
+	}
+
+	.period-tag--neutral {
+		background: rgba(123, 133, 156, 0.16);
+		color: #c2cada;
+	}
+
+	.period-story {
+		color: #c7cbd7;
+		font-size: 0.96rem;
 	}
 
 	.period-metric {
@@ -911,6 +1063,7 @@
 	@media (max-width: 1100px) {
 		.hero,
 		.controls-grid,
+		.question-grid,
 		.card-grid,
 		.period-grid,
 		.focus-grid,
@@ -931,6 +1084,7 @@
 		}
 
 		.controls-grid,
+		.question-grid,
 		.card-grid,
 		.period-grid,
 		.focus-grid,
